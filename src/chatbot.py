@@ -6,15 +6,19 @@ class Chatbot:
 
 
     def __init__(self):
-        #get response list from file
+        """
+        This constructor attempts to open the response mapping file, 
+        if it can't be found then it creates a new responseMap dictionary
+        
+        """
         try:
             fileHandle = open(self.RESPONSE_MAP_FILE_NAME, 'r')
             self.responseMap = cPickle.load(fileHandle)
         except:
             self.responseMap = {}
    
-
-    def get_some_info(self):
+   
+    def __get_some_info(self):
         # This will try and gain responses for previous interactions which have no response yet.
         # Later this can ask a certain number of questions depending on how many answers we have for each
         for statement in self.responseMap.keys():
@@ -29,21 +33,26 @@ class Chatbot:
 
     def start_chatting(self):
         # first try to fill in missing info
-        self.get_some_info()
+        self.__get_some_info()
 
         # then change to accepting user input
-        print "Shelly: Ask me something"
-
-        # for now just get 4 questions
-        for i in range(0, 4):
+        print "Shelly: Ask me something, say 'stop' to end"
+        
+        
+        # Do back and forth until user says 'stop'
+        while True:
             print "You: ",
             
             # get the users input
             userInput = raw_input()
+            
+            if userInput == 'stop':
+                self.close()
+                
             print "Shelly: ",
             
             # find a response
-            print self.get_response(userInput)
+            print self.__get_response(userInput)
             
             #for debugging let's see where we are getting our info
             print self.responseMap
@@ -53,13 +62,13 @@ class Chatbot:
         return None
     
     
-    def get_response(self, userInput):
+    def __get_response(self, userInput):
         
         # go though all the statements we have 
         for response in self.responseMap.keys():
 
             # try to find a match, .5 is the strictness of the match
-            if self.compare_input(response, userInput, .5):
+            if self.__compare_input(response, userInput, .5):
                 
                 # if we have a match then we add all the given responses 
                 # for that match to the key of the usersInput so we 
@@ -71,15 +80,15 @@ class Chatbot:
 
         # No good match was found for the user's input
         self.responseMap[userInput] = []
-        return self.no_response(userInput)
+        return self.__no_response(userInput)
 
     
-    def no_response(self, userInput):
+    def __no_response(self, userInput):
         # called if we can find no sutible response, currently this is a stub
         return "..."
 
 
-    def compare_input(self, strOne, strTwo, ratioCondition=.75):
+    def __compare_input(self, strOne, strTwo, ratioCondition=.75):
         # This method determines whether to strings are semanticlly equivelent,
         # right now it just matches characters and gets the ratio of correct to the length,
         # but eventually it can match similar words         
@@ -100,7 +109,7 @@ class Chatbot:
             if character == longerStr[index]:
                 arrayOfMatchingChars[index] = 1
         charMatchSum = sum(arrayOfMatchingChars)
-        matchRatio = float(charMatchSum)/float(len(longerStr))
+        matchRatio = float(charMatchSum) / float(len(longerStr))
         if (matchRatio >= ratioCondition):
             return True
         return False
