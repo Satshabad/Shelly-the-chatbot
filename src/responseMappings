@@ -1,0 +1,25 @@
+(dp1
+S'nide day!'
+p2
+(lp3
+S'you think so?'
+p4
+asS'how old are you?'
+p5
+(lp6
+S'pretty old'
+p7
+asS"whats's your name?"
+p8
+(lp9
+S'tell me yours first'
+p10
+asS'where are you?'
+p11
+(lp12
+S'home'
+p13
+asS'tell me a tale!'
+p14
+(lp15
+s.
